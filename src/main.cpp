@@ -55,9 +55,11 @@ void setup()
   preamp.setSnd(3, 1);                     // Bass (-7 - 7)
   preamp.setSnd(3, 2);                     // Midle (-7 - 7)
   preamp.setSnd(5, 3);                     // High (-7 - 7)
-  preamp.setInput(1);                      //  (1-4)
-  preamp.setVolume(5);                     // (0-48), 0 Mute
-
+  preamp.setInput(2);                      //  (1-4)
+  preamp.inputGain(2);
+  preamp.setVolume(33);                     // (0-48), 0 Mute
+  preamp.spkAtt(0); 
+  
 
   if (diag) { Serial.begin(9600); Serial.println("Serial Ready. Setup routine");}
   pinMode(MCUON_PIN, OUTPUT);               //    MCU_ON state Light Diode
