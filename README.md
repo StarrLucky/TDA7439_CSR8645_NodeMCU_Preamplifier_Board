@@ -5,3 +5,7 @@ Schematics (TDA7439 and logic) available here: https://easyeda.com/fxndstrs/tda7
 Project is in progress and not fully tested yet.
 
 Sorry_for_bad_C++
+
+
+Project works with PlatformIo sdk espressif8266@1.8.0
+only. Interrupts doesn't work with newest version 
