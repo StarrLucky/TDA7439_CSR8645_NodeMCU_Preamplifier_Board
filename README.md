@@ -1,7 +1,7 @@
-LM1876 + TDA7439 + NodeMCU + CSR8645 DIY Amplifier project (PlatformIO)
+LM1876 + TDA7439 + NodeMCU + CSR8645 DIY Amplifier project (ATOM IDE + PlatformIO)
 
-Schematics (TDA7439 and logic) available here: https://easyeda.com/fxndstrs/tda7439 LM1876 Amplifier: https://easyeda.com/fxndstrs/lm1876
+Schematics (TDA7439 and logic) available here: [easyEDA](https://easyeda.com/fxndstrs/tda7439)
 
 
-Project works with PlatformIO sdk espressif8266@1.8.0
+**Project works with PlatformIO sdk espressif8266@1.8.0**
 only. Interrupts doesn't work with the newest version of the SDK.
