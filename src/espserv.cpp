@@ -147,6 +147,7 @@ void handleTdaArgs()
 		if ( (b>=1) && (b<=4) ) {
     mserv.send ( 200, "text/plain", "Input " + message + " enabled" );
 		preampcontrol.setInput(b);
+		preampcontrol.lastInput = b;
 	} else {mserv.send ( 200, "text/plain", "Wrong Input number" );}
 
 	}

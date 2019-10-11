@@ -4,7 +4,7 @@
 
 #define STANDBY_PIN     13    // D7     AMPLIFIER STANDBY control pin
 #define BT_PIN          2     // D4     CSR8645 module Enable Pin
-#define MCUON_PIN       15    // D8     MCU_ON state Light Diode pin
+#define LED_PIN         15    // D8       Pin with 2 Light diodes in
 #define CURSENS_PIN     17    // A0     CS60-010 Current Sensor AS324 OPAMP out
 #define TEMPSENS_PIN    17    // A0     Temp Sensor pin
 #define BUTTON_PIN      0     // D3     Button Pin

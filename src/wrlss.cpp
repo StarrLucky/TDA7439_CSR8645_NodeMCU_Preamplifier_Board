@@ -18,10 +18,7 @@ PERIF LED = PERIF();
 
 W_LAN::W_LAN(){
 
-
 Serial.println("Pidar");
-
-
 
 }
 
@@ -29,7 +26,7 @@ void W_LAN::SetSSIDs(int num, String *ssids,  String *pass)
 {
 
 
-  
+
   // espdata.ssids  =  num;
 
 
@@ -81,13 +78,13 @@ while ((WiFi.status() != WL_CONNECTED))
 
       if (diag) { Serial.println("Connecting to"); Serial.println(ssid); }
       espdata.WiFiStatus =  WiFi.begin(ssid.c_str(), password.c_str());
-      LED.BlinkLed(MCUON_PIN, 3, 100, 10, 0);
+      LED.BlinkLed(2, 3, 100, 10, 0);
       delay(10000);  // wait 10 sec for connection
 
       if  (WiFi.status() == WL_CONNECTED)   // connection succ
       {
         espdata.WiFiAP = espdata.LastConnSSID = ssid; espdata.LastConnPass = password;
-        LED.BlinkLed(MCUON_PIN, 5, 50, 10, 1);
+        LED.BlinkLed(2, 5, 50, 10, 1);
         break;
        }
     }
@@ -103,11 +100,11 @@ while ((WiFi.status() != WL_CONNECTED))
 
          if (diag) { Serial.println("Connecting to"); Serial.println(espdata.LastConnSSID); }
          espdata.WiFiStatus =  WiFi.begin(espdata.LastConnSSID.c_str(), espdata.LastConnPass.c_str());
-         LED.BlinkLed(MCUON_PIN, 3, 100, 10, 0);
+         LED.BlinkLed(2, 3, 100, 10, 0);
          delay(10000);  // wait 10 sec for connection
 
          if  (WiFi.status() == WL_CONNECTED) { espdata.WiFiAP = espdata.LastConnSSID;
-           LED.BlinkLed(MCUON_PIN, 5, 50, 10, 1); break;}
+           LED.BlinkLed(2, 5, 50, 10, 1); break;}
        }
    }
 
@@ -120,12 +117,12 @@ while ((WiFi.status() != WL_CONNECTED))
        if  (WiFi.status() == WL_CONNECTION_LOST) // if connection dropped
        {
           // blinking like a slutty tranny in the club
-        LED.BlinkLed(MCUON_PIN, 3, 200, 200, 0);
+        LED.BlinkLed(2, 3, 200, 200, 0);
          AP.ConnectToLastAP();
        }
        else if (espdata.WiFiStatus != WL_CONNECTED) // if it is wasn't connected at all
        {
-         LED.BlinkLed(MCUON_PIN, 5, 50, 10, 1);
+         LED.BlinkLed(2, 5, 50, 10, 1);
          AP.Connect();
        }
 

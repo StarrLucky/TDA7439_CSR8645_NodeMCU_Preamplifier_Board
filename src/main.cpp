@@ -22,11 +22,11 @@
 //
 // Starr Lucky, jan 2019
 
-bool diag = true;
+bool diag = false;
 
 // Router APs
 String ssid [] = {"StarrLucky","Lan_Indoor"};
-String password [] = {"luckys322", "KurwaPidarGandonJevlarSuccMaPusseyDQ"};
+String password [] = {"luckys322", "luckys322"};
 
 int ssidnum = 2;
 unsigned long time1 = 0, lastUIupdate = 9999, lastcheck = 9999;
@@ -36,8 +36,10 @@ PERIF LED1 = PERIF();
 TDA7439 preamp  = TDA7439();                // using TDA7439 2-wire library
 W_LAN RouterAP = W_LAN();
 
-volatile unsigned long int rise_time;
-
+volatile unsigned long int rise_time = 1000;
+volatile unsigned long int lastinterr, thisinterr, lastpush = 0;
+volatile bool interrhandled = true; volatile bool interruptenable = false;
+unsigned int buttonpushed = 0;
 void PowerButton();
 
 
@@ -58,15 +60,15 @@ void setup()
   preamp.setInput(2);                      //  (1-4)
   preamp.inputGain(2);
   preamp.setVolume(33);                     // (0-48), 0 Mute
-  preamp.spkAtt(0); 
-  
+  preamp.spkAtt(0);
+
 
   if (diag) { Serial.begin(9600); Serial.println("Serial Ready. Setup routine");}
-  pinMode(MCUON_PIN, OUTPUT);               //    MCU_ON state Light Diode
-  digitalWrite(MCUON_PIN, HIGH);
+
+
+
   pinMode(STANDBY_PIN, OUTPUT);            //    AMPLIFIER STANDBY control pin
   digitalWrite(STANDBY_PIN, LOW);         //     Not in standby mode
-
 
   W_LAN();
   RouterAP.SetSSIDs(ssidnum, ssid, password);
@@ -80,6 +82,7 @@ void setup()
   if (diag) { Serial.println("Setup success");}
   Serial.println("Local IP:");
   Serial.println(WiFi.localIP());
+  interruptenable = true;
 
 }
 
@@ -102,12 +105,27 @@ void loop()
 
 
  void PowerButton() {                    // Button interrupt function
+if (interruptenable) {
 
-   if ((millis() - 400) >  rise_time)   // if interrupt was made less than XXXms
-                                        // then it's switching chatter and must be filtered.
-   {
-     digitalWrite(AMPPOWER_PIN, !AmpPower_state);
-     AmpPower_state = !AmpPower_state;
-     rise_time = millis();
-   }
- }
+thisinterr =  millis();
+
+if ((thisinterr > lastinterr + 200) && (thisinterr<lastinterr+2000) && (thisinterr> lastpush+2000) )
+{
+    if (diag) {        Serial.println("SINGLE TAP");}
+      lastpush = millis();
+      preamp.changeInput();
+    }
+
+else if ( (thisinterr>lastinterr+3000) && (thisinterr<lastinterr+6000) && (thisinterr> lastpush+2000))   // trying to identify if button is being pressed
+{
+
+    if (diag) { Serial.println("LONG TAP");}
+    lastpush = millis();
+
+    digitalWrite(AMPPOWER_PIN, !AmpPower_state);
+    AmpPower_state = !AmpPower_state;
+}
+
+lastinterr = millis();
+}
+}

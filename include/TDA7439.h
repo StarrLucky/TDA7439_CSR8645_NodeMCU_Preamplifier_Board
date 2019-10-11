@@ -42,7 +42,13 @@ class TDA7439
 	void setSnd(int val, int range); //-7 to +7 , 1 - Bass | 2 - Mids | 3 - Trebble
 	void mute();
 	void spkAtt(int att); // Output attenuation 0 to 79 (db) can be used for balance but not enabled in this code.
-  int lastVolume, lastGain, lastMid, lastBass, lastTrebb, lastAtt;   // last settings
+  int lastVolume, lastGain, lastMid, lastBass, lastTrebb, lastAtt, lastInput;   // last settings
+  void changeInput()
+  {
+   if (lastInput == 4) { setInput(1); }
+   else  {setInput(lastInput+1);}
+  }
+
   private:
 	void writeWire(char a, char b);
 

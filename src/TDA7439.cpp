@@ -9,6 +9,7 @@ TDA7439::TDA7439(){
 }
 
 void TDA7439::setInput(int input){
+	lastInput = input;
   switch (input) {
     case 1: input = TDA7439_input_1;break;
 	case 2: input = TDA7439_input_2;break;
