@@ -1,4 +1,4 @@
-LM1876 + TDA7439 + NodeMCU + CSR8645 DIY Amplifier project (ATOM IDE + PlatformIO)
+TDA7439 + NodeMCU + CSR8645 DIY Amplifier project (ATOM IDE + PlatformIO)
 
 Schematics (TDA7439 and logic) available here: [easyEDA](https://easyeda.com/fxndstrs/tda7439)
 
