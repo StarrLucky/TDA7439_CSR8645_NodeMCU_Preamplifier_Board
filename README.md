@@ -1,6 +1,7 @@
-TDA7439 + NodeMCU + CSR8645 DIY Amplifier project (ATOM IDE + PlatformIO)
+# TDA7439 + NodeMCU + CSR8645 DIY Preamplifier project (ATOM IDE + PlatformIO)
 
 Schematics (TDA7439 and logic) available here: [easyEDA](https://easyeda.com/fxndstrs/tda7439)
+
 
   **TO DO:**
 - [x] Access points connection and mdnsserver
@@ -10,6 +11,8 @@ Schematics (TDA7439 and logic) available here: [easyEDA](https://easyeda.com/fxn
 - [ ] Sensor Readings
 - [ ] Saving settings to EEPROM
 - [ ] CSR8645 Control
+
+![PCB](/PCB.JPG)
 
 
 **Project works with PlatformIO sdk espressif8266@1.8.0**
