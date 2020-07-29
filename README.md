@@ -15,5 +15,4 @@ Schematics (TDA7439 and logic) available here: [easyEDA](https://easyeda.com/fxn
 ![PCB](/PCB.JPG)
 
 
-**Project works with PlatformIO sdk espressif8266@1.8.0**
-only. Interrupts doesn't work with the newest version of the SDK.
+**Project works with PlatformIO sdk espressif8266@1.8.0** Interrupts doesn't work with the newest version of the SDK.
