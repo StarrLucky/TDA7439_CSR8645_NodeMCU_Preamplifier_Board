@@ -7,42 +7,21 @@
 #include <defines.h>
 #include <Arduino.h>
 
-
-
 String ardstr;
-
-
-
 
 PERIF LED = PERIF();
 
 W_LAN::W_LAN(){
-
-Serial.println("Pidar");
-
 }
 
 void W_LAN::SetSSIDs(int num, String *ssids,  String *pass)
 {
-
-
-
-  // espdata.ssids  =  num;
-
-
-  //
-  // memcpy(espdata.ssid, ssids, num * sizeof(ssids));
-  // memcpy(espdata.password, pass, num * sizeof(pass));
-
-// strcpy(espdata.ssid, ssids);
-// strcpy(espdata.password, pass);
 
 }
 
 
 void W_LAN::Connect()
 {
-
 int iii = 0; int i = 0;
 while ((WiFi.status() != WL_CONNECTED))
  {
@@ -62,20 +41,17 @@ while ((WiFi.status() != WL_CONNECTED))
     if (i == espdata.ssids+1) {   i = 0;  Serial.println("connection failed after 3 attempts");  break; }  // connection failed after 3 attempts
 
   }  else { i++; iii=0; }
-
 }
-
 }
 
 
   void W_LAN::ConnectToAP(String ssid, String password)
   {
-
   int iii = 0;
   while ((WiFi.status() != WL_CONNECTED) || (iii<3))    // 3 attempts to connect to the AP
    {
      iii++;
-
+    
       if (diag) { Serial.println("Connecting to"); Serial.println(ssid); }
       espdata.WiFiStatus =  WiFi.begin(ssid.c_str(), password.c_str());
       LED.BlinkLed(2, 3, 100, 10, 0);
@@ -130,8 +106,6 @@ while ((WiFi.status() != WL_CONNECTED))
      }
 
    }
-
-
 
 
 
