@@ -5,9 +5,11 @@
 #include <ESP8266WiFi.h>
 
 
+#define WLAN_MAX_APS 5
+
 struct wlanstruct {
- char ssid[5];
- char password[5];
+ String ssid[WLAN_MAX_APS];
+ String password[WLAN_MAX_APS];
  int ssids;
  int lastconnectedN;
  String  LastConnSSID;
@@ -28,7 +30,7 @@ public:
   wlanstruct espdata;
   void Connect();
 //  void StartServer();
-  void WLanControl(W_LAN info);
+  void WLanControl();
   void ConnectToAP(String ssid, String password);
   void ConnectToLastAP();
   void SetSSIDs(int num,  String *ssids,  String *pass);
