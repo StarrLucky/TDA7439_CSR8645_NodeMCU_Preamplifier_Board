@@ -6,6 +6,7 @@
 TDA7439::TDA7439(){
 	Wire.begin(SDA , SCL );
 	EEPROM.begin(24);
+	lastVolume = 33;   // power-up volume, so an unmute before any setVolume() restores something audible
 }
 
 void TDA7439::setInput(int input){
@@ -25,13 +26,14 @@ void TDA7439::inputGain(int gain){
 }
 
 void TDA7439::setVolume(int volume){
+  int reg;
   if (volume == 0){
-    volume = TDA7439_mute;
+    reg = TDA7439_mute;
 	}else{
-	  volume = 48 - volume;
-		lastVolume = volume;
+	  reg = 48 - volume;
+		lastVolume = volume;   // keep the user level value, mute/unmute restores it
   }
-  writeWire(TDA7439_volume,volume);
+  writeWire(TDA7439_volume,reg);
 }
 
 void TDA7439::setSnd(int val, int range){

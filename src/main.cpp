@@ -94,7 +94,7 @@ void loop()
 
   if (time1 > (lastcheck + 10000))
    {
-     RouterAP.WLanControl(RouterAP);        // checking if wifi connection is ok for every 10 sec
+     RouterAP.WLanControl();        // checking if wifi connection is ok for every 10 sec
      lastcheck = millis();
    }
 

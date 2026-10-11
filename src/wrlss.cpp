@@ -12,11 +12,20 @@ String ardstr;
 PERIF LED = PERIF();
 
 W_LAN::W_LAN(){
+  espdata.ssids = 0;
 }
 
 void W_LAN::SetSSIDs(int num, String *ssids,  String *pass)
 {
+  if (num > WLAN_MAX_APS) { num = WLAN_MAX_APS; }   // don't overrun espdata.ssid[]
+  if (num < 0) { num = 0; }
 
+  espdata.ssids = num;
+  for (int i = 0; i < num; i++)
+  {
+    espdata.ssid[i] = ssids[i];
+    espdata.password[i] = pass[i];
+  }
 }
 
 
@@ -25,20 +34,21 @@ void W_LAN::Connect()
 int iii = 0; int i = 0;
 while ((WiFi.status() != WL_CONNECTED))
  {
+    if (i >= espdata.ssids) { i = 0; Serial.println("connection failed after 3 attempts"); break; }  // every AP tried
+
     iii++;
     if (iii<3)   // 3 attempts to connect to the APs
     {
 
     Serial.println("Attempt "); Serial.print(iii);
 
-    if (diag) { Serial.println("Connecting to "); Serial.print(espdata.ssid[0]); }
+    if (diag) { Serial.println("Connecting to "); Serial.print(espdata.ssid[i]); }
 
-    espdata.WiFiStatus =  WiFi.begin((const char*)espdata.ssid[i], (const char*)espdata.password[i]);
+    espdata.WiFiStatus =  WiFi.begin(espdata.ssid[i].c_str(), espdata.password[i].c_str());
     delay(10000);  // wait 10 sec for connection
 
-    if  (WiFi.status() == WL_CONNECTED) { espdata.WiFiAP = espdata.LastConnSSID = espdata.ssid[i]; espdata.LastConnPass = espdata.password[i]; break;
-    Serial.println("Connected!"); }
-    if (i == espdata.ssids+1) {   i = 0;  Serial.println("connection failed after 3 attempts");  break; }  // connection failed after 3 attempts
+    if  (WiFi.status() == WL_CONNECTED) { espdata.WiFiAP = espdata.LastConnSSID = espdata.ssid[i]; espdata.LastConnPass = espdata.password[i];
+    Serial.println("Connected!"); break; }
 
   }  else { i++; iii=0; }
 }
@@ -48,7 +58,7 @@ while ((WiFi.status() != WL_CONNECTED))
   void W_LAN::ConnectToAP(String ssid, String password)
   {
   int iii = 0;
-  while ((WiFi.status() != WL_CONNECTED) || (iii<3))    // 3 attempts to connect to the AP
+  while ((WiFi.status() != WL_CONNECTED) && (iii<3))    // 3 attempts to connect to the AP
    {
      iii++;
     
@@ -70,7 +80,7 @@ while ((WiFi.status() != WL_CONNECTED))
   void W_LAN::ConnectToLastAP()
    {
      int iii = 0;
-     while ((WiFi.status() != WL_CONNECTED) || (iii<3))    // 3 attempts to connect to the AP
+     while ((WiFi.status() != WL_CONNECTED) && (iii<3))    // 3 attempts to connect to the AP
       {
         iii++;
 
@@ -85,7 +95,7 @@ while ((WiFi.status() != WL_CONNECTED))
    }
 
 
-   void W_LAN::WLanControl(W_LAN AP)
+   void W_LAN::WLanControl()
    {
 
      if ((WiFi.status() != WL_CONNECTED))   // if no connection to router
@@ -94,12 +104,12 @@ while ((WiFi.status() != WL_CONNECTED))
        {
           // blinking like a slutty tranny in the club
         LED.BlinkLed(2, 3, 200, 200, 0);
-         AP.ConnectToLastAP();
+         ConnectToLastAP();
        }
        else if (espdata.WiFiStatus != WL_CONNECTED) // if it is wasn't connected at all
        {
          LED.BlinkLed(2, 5, 50, 10, 1);
-         AP.Connect();
+         Connect();
        }
 
 
