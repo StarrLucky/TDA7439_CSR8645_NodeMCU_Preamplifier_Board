@@ -12,6 +12,13 @@
 #define AMPPOWER_ON     0     //        RELAY MODULE ACTIVE LOW
 #define AMPPOWER_OFF    1     //
 
+// Button behaviour. GPIO0 carries the boot strap pull-up, so the contact pulls
+// it down: idle is HIGH and a press reads LOW. Flip this if the button is
+// wired active high.
+#define BUTTON_PRESSED_LEVEL  LOW
+#define BUTTON_DEBOUNCE_MS    30     // contact bounce window
+#define BUTTON_LONGPRESS_MS   1500   // hold this long for amplifier power toggle
+
 
 extern bool diag;
 
