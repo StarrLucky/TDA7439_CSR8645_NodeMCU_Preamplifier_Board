@@ -30,17 +30,23 @@ String password [] = {"luckys322", "luckys322"};
 
 int ssidnum = 2;
 unsigned long time1 = 0, lastUIupdate = 9999, lastcheck = 9999;
-int AmpPower_state = 0;
+bool AmpPower_state = false;                // true while the amplifier relay is powered
 
 PERIF LED1 = PERIF();
 TDA7439 preamp  = TDA7439();                // using TDA7439 2-wire library
 W_LAN RouterAP = W_LAN();
 
-volatile unsigned long int rise_time = 1000;
-volatile unsigned long int lastinterr, thisinterr, lastpush = 0;
-volatile bool interrhandled = true; volatile bool interruptenable = false;
-unsigned int buttonpushed = 0;
-void PowerButton();
+// Button handling is split in two. The ISR below only timestamps edges; the
+// actual work happens in loop(). Driving I2C (changeInput) or Serial from
+// interrupt context is what trips the hardware watchdog - see issue #1.
+volatile bool interruptenable = false;
+volatile bool buttonDown = false;           // debounced button state
+volatile unsigned long lastEdge = 0;        // millis() of the last accepted edge
+volatile unsigned long pressStarted = 0;    // millis() when the button went down
+volatile unsigned long pendingPress = 0;    // length of a finished press, 0 = nothing to do
+
+void ICACHE_RAM_ATTR PowerButton();
+void HandleButtonPress(unsigned long duration);
 
 
 
@@ -48,7 +54,7 @@ void setup()
 {
 
   pinMode(BUTTON_PIN, INPUT);
-  attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), (PowerButton), RISING);   // attaching interrupt for pushing power button
+  attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), (PowerButton), CHANGE);   // both edges: press and release
 
   pinMode(AMPPOWER_PIN, OUTPUT);
   digitalWrite(AMPPOWER_PIN, AMPPOWER_OFF);
@@ -78,6 +84,7 @@ void setup()
   ESP_SERV_SETUP();
 
   digitalWrite(AMPPOWER_PIN, AMPPOWER_ON);
+  AmpPower_state = true;
 
   if (diag) { Serial.println("Setup success");}
   Serial.println("Local IP:");
@@ -98,34 +105,50 @@ void loop()
      lastcheck = millis();
    }
 
+   unsigned long press;                    // a press the ISR has finished timing
+   noInterrupts();
+   press = pendingPress;
+   pendingPress = 0;
+   interrupts();
+
+   if (press > 0) { HandleButtonPress(press); }
+
    ESP_SERV_HANDLE_CLIENT();               // waiting for mDNS request
 
  }
 
 
 
- void PowerButton() {                    // Button interrupt function
-if (interruptenable) {
-
-thisinterr =  millis();
-
-if ((thisinterr > lastinterr + 200) && (thisinterr<lastinterr+2000) && (thisinterr> lastpush+2000) )
+ void ICACHE_RAM_ATTR PowerButton()      // Button interrupt: timestamps only, no I2C, no Serial
 {
-    if (diag) {        Serial.println("SINGLE TAP");}
-      lastpush = millis();
-      preamp.changeInput();
-    }
+  if (!interruptenable) { return; }
 
-else if ( (thisinterr>lastinterr+3000) && (thisinterr<lastinterr+6000) && (thisinterr> lastpush+2000))   // trying to identify if button is being pressed
+  unsigned long now = millis();
+  if (now - lastEdge < BUTTON_DEBOUNCE_MS) { return; }   // contact bounce
+  lastEdge = now;
+
+  bool down = (digitalRead(BUTTON_PIN) == BUTTON_PRESSED_LEVEL);
+  if (down == buttonDown) { return; }                    // bounced back to the same level
+  buttonDown = down;
+
+  if (down) { pressStarted = now; }
+  else if (pressStarted != 0) { pendingPress = now - pressStarted; }   // loop() classifies it
+}
+
+
+void HandleButtonPress(unsigned long duration)   // runs from loop(), safe to touch I2C
 {
+  if (duration >= BUTTON_LONGPRESS_MS)
+  {
+    if (diag) { Serial.println("LONG TAP"); }
 
-    if (diag) { Serial.println("LONG TAP");}
-    lastpush = millis();
-
-    digitalWrite(AMPPOWER_PIN, !AmpPower_state);
     AmpPower_state = !AmpPower_state;
-}
+    digitalWrite(AMPPOWER_PIN, AmpPower_state ? AMPPOWER_ON : AMPPOWER_OFF);
+  }
+  else
+  {
+    if (diag) { Serial.println("SINGLE TAP"); }
 
-lastinterr = millis();
-}
+    preamp.changeInput();
+  }
 }
